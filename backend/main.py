@@ -1,7 +1,9 @@
 from pathlib import Path
 from datetime import datetime, timezone
 import hashlib
+import psycopg
 
+from backend.database import get_connection
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
 
@@ -57,6 +59,40 @@ async def upload_file(file: UploadFile = File(...)):
 
     # 업로드 완료 시간
     uploaded_at = datetime.now(timezone.utc).isoformat()
+
+    # PostgreSQL에 파일 메타데이터 저장
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO files (
+                        filename,
+                        size,
+                        sha256,
+                        content_type,
+                        uploaded_at
+                    )
+                    VALUES (%s, %s, %s, %s, %s)
+                    """,
+                    (
+                        filename,
+                        file_size,
+                        sha256.hexdigest(),
+                        file.content_type,
+                        uploaded_at
+                    )
+                )
+
+    except psycopg.Error:
+        # DB 저장 실패 시 업로드한 파일 삭제
+        destination.unlink(missing_ok=True)
+
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to save file metadata"
+        )
+
 
     return {
         "filename": filename,
