@@ -116,3 +116,30 @@ def download_file(filename: str):
         path=file_path,
         filename=filename
     )
+
+@app.get("/files")
+def list_files():
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, filename, size, sha256,
+                       content_type, uploaded_at
+                FROM files
+                ORDER BY uploaded_at DESC, id DESC
+                """
+            )
+
+            rows = cur.fetchall()
+
+    return [
+        {
+            "id": row[0],
+            "filename": row[1],
+            "size": row[2],
+            "sha256": row[3],
+            "content_type": row[4],
+            "uploaded_at": row[5].isoformat()
+        }
+        for row in rows
+    ]
