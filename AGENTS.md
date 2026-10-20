@@ -11,7 +11,8 @@
   제공하는 개인 클라우드 스토리지 시스템.
 - 현재 백엔드: Python, FastAPI, psycopg를 통한 PostgreSQL 연결, 로컬 파일시스템.
 - 서버 실행: Uvicorn 사용을 README에서 안내한다. 실제 운영 배포 상태는 별도로 확인한다.
-- 향후 웹 UI: React 또는 Next.js 기반으로 구성할 예정이며, 아직 선택·구현되지 않았다.
+- 현재 웹 UI: frontend/의 Next.js App Router, React, TypeScript, Tailwind CSS 기반
+  내부망 개발용 목록·업로드·다운로드·삭제 확인 화면. 인증은 미구현이며 삭제 API는 기본 비활성화다.
 - 현재 코드는 Linux의 flock, O_NOFOLLOW 등을 사용한다. 타 OS나 분산 저장소에서의
   호환성을 확인 없이 가정하지 않는다.
 
@@ -27,8 +28,14 @@ backend/
   test_delete.py       # 삭제 및 기존 API 회귀 테스트
   test_stability.py    # 동시성·장애·프로세스 종료 후 복구 테스트
   test_db.py           # 실행/임포트 시 설정된 DB에 연결하는 확인 스크립트
+frontend/
+  src/app/             # Next.js 화면·레이아웃 및 스트리밍 업로드 Route Handler
+  src/components/      # 파일 목록·업로드·상태 안내 UI
+  src/lib/             # API 요청, 서버 전용 loopback 주소 검증, 표시 형식
+  tests/               # 단위·컴포넌트·격리 브라우저 테스트
+  README.md            # Node 22·Windows 내부망 접속·격리 테스트 안내
 docs/PROJECT_STATUS.md  # 개발 현황, 검증 결과, 로드맵
-README.md              # 실행·복구 안내; 일부 과거 현황 표기는 코드와 대조 필요
+README.md              # 실행·복구 및 웹 UI 안내
 AGENTS.md              # 공통 개발 규칙
 지침서.txt              # 사용자 작업 지시; 최신 대화와 함께 해석
 ```
@@ -48,6 +55,9 @@ AGENTS.md              # 공통 개발 규칙
 
 - 기존 API 경로, 요청·응답 형식 및 오류 처리와 DB 호환성을 유지한다.
   변경이 필요하면 영향과 마이그레이션 방안을 먼저 설명한다.
+- 웹 UI는 rewrites를 통해 기본 http://127.0.0.1:8000에 연결한다. 업로드는
+  내부 rewrite와 스트리밍 핸들러를 유지해 Next.js 외부 rewrite의 본문 복제를 피한다.
+  브라우저·Next.js에서 파일 전체를 ArrayBuffer·base64·Blob 등으로 다시 적재하지 않는다.
 - SQL에서 확인한 files 컬럼은 id, filename, size, sha256, content_type, uploaded_at이다.
   실제 DB 타입·제약조건·인덱스는 별도 확인 대상이다. 소스만 보고 단정하지 않는다.
 - 업로드·삭제·복구는 같은 파일명에 대한 공통 잠금을 유지한다. 서로 다른 이름을

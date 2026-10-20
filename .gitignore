@@ -18,3 +18,14 @@ storage/
 # Logs
 *.log
 *.bak
+
+# Frontend dependencies, local runtime and generated reports
+frontend/node_modules/
+frontend/.runtime/
+frontend/.next/
+frontend/.next-test/
+frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts

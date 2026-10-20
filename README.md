@@ -1,5 +1,18 @@
 # Nestside
 
+## 웹 프론트엔드 v0.1
+
+Next.js + TypeScript + Tailwind CSS 기반 파일 목록·업로드·다운로드·삭제 확인 UI를 frontend/에 구현했습니다.
+**인증이 없는 내부망 개발용이며 인터넷 공개용이 아닙니다. 삭제 API의 기본 비활성화 정책을 유지합니다.**
+
+Ubuntu에서 frontend 디렉터리의 Node 22 환경을 활성화한 뒤 npm run dev로 실행하면
+Windows에서 http://172.30.1.46:3000 으로 접속할 수 있습니다. FastAPI는 서버 내부
+127.0.0.1:8000에 두고 Next.js rewrites와 스트리밍 업로드 핸들러를 통해 연결합니다.
+
+서버의 기존 Node 18을 위한 프로젝트 내부 런타임 설정, 전체 실행 명령, 격리 테스트와
+대용량 전송 제약은 [frontend/README.md](frontend/README.md)를 참고하세요.
+구현·검증 상태와 다음 작업은 [개발 현황](docs/PROJECT_STATUS.md)에 기록합니다.
+
 ## 개발용 파일 삭제와 장애 복구
 
 `DELETE /files/{file_id}`는 기본 비활성화이며 `403`을 반환합니다.
@@ -102,8 +115,8 @@ PC 간 파일 동기화와 AI 기반 파일 검색 및 저장공간 관리 기�
 
 - **Server**: Ubuntu
 - **Backend**: Python, FastAPI, Uvicorn
-- **Frontend**: Next.js, React (예정)
-- **Database**: PostgreSQL (예정)
+- **Frontend**: Next.js, React, TypeScript, Tailwind CSS
+- **Database**: PostgreSQL
 - **Version Control**: Git, GitHub
 
 ## 개발 현황
@@ -111,12 +124,14 @@ PC 간 파일 동기화와 AI 기반 파일 검색 및 저장공간 관리 기�
 ### 구현 완료
 - [x] Ubuntu 기반 HTTP 파일 서버 구축
 - [x] 파일 업로드 및 다운로드 API 구현
-- [x] 대용량 파일 전송 및 SHA-256 무결성 검증
+- [x] 청크 파일 저장, SHA-256 계산 및 서버 측 파일·메타데이터 비교
 - [x] GitHub 저장소 구축
 
 ### 개발 예정
-- [ ] 파일 메타데이터 관리 및 데이터베이스 연동
-- [ ] 웹 기반 파일 관리 인터페이스
+- [x] 파일 메타데이터 관리 및 데이터베이스 연동
+- [x] 웹 기반 목록·업로드·다운로드 인터페이스
+- [x] 파일 삭제 확인 UI와 기존 삭제 API 연동
+- [ ] 인증·권한 검사
 - [ ] PC 파일 자동 동기화
 - [ ] AI 기반 파일 검색 및 저장공간 분석
 - [ ] 대용량 파일 분할 전송 및 이어받기

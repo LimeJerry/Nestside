@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@theme inline {
+  --font-sans: Arial, "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+}
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+:focus-visible {
+  outline: 2px solid #24745b;
+  outline-offset: 4px;
+}
+@layer components {
+  .button-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-[#244f43] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#183b31] disabled:bg-stone-200 disabled:text-stone-400;
+  }
+  .button-secondary {
+    @apply inline-flex shrink-0 items-center justify-center rounded-lg border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition hover:border-emerald-600 hover:text-emerald-800 disabled:opacity-50;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
